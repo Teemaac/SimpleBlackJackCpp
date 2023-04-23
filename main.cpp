@@ -17,13 +17,13 @@ int main()
     int dealerTotal = 0;
     int playerMoney = 100; // Starting amount of money
     int playerBet = 0;
-    int numAces = 0;
     char playAgain = 'y';
+    int numAces;
     int hand1Total;
     int hand2Total;
     char choice;
-    int hand1Bet = playerBet;
-    int hand2Bet = playerBet;
+    int hand1Bet;
+    int hand2Bet;
     char splitChoice = 'n';
 
     cout << "Welcome to Retro BlackJack ®️" << endl;
@@ -31,7 +31,7 @@ int main()
     while (playerMoney > 0 && playAgain == 'y') {
 
         numAces = 0;
-       cout << "You have $" << playerMoney << ". How much would you like to wager? ";
+        cout << "You have $" << playerMoney << ". How much would you like to wager? ";
         cin >> playerBet;
 
     while (!isValidBet(playerBet, playerMoney)) {
@@ -67,6 +67,9 @@ int main()
                 // Create two new hands
                 hand1Total = card1;
                 hand2Total = card2;
+                hand1Bet = playerBet;
+                hand2Bet = playerBet;
+
                 int hand1Card = rand() % 10 + 1;
                     if (hand1Card == 1) {
                         numAces++;
@@ -87,6 +90,7 @@ int main()
                 cout << "Hand 2 total: " << hand2Total << endl;
 
             // Play out each hand separately
+                int card2;
                 while (hand1Total < 21) {
                     cout << "Hand 1: Do you want to hit or stand? (h/s): ";
                     cin >> choice;
@@ -173,6 +177,14 @@ int main()
                     }
 
                     cout << "Your new card: " << newCard << endl;
+
+                    if (playerTotal > 21){
+                        if(numAces > 0){
+                            numAces -= 1;
+                            playerTotal -= 10;
+                        }
+                    }
+
                     cout << "Your total: " << playerTotal << endl;
 
                 } else {
@@ -183,38 +195,41 @@ int main()
             }
 
             while (choice == 'h') {
-                int newCard = rand() % 10 + 1;
-                    if (newCard == 1) {
-                        numAces++;
-                        playerTotal += 10; // Ace is worth 11
-                    }
-                playerTotal += newCard;
+                    int newCard = rand() % 10 + 1;
+                        if (newCard == 1) {
+                            numAces++;
+                            playerTotal += 10; // Ace is worth 11
+                        }
+                    playerTotal += newCard;
 
-                cout << "Your current hand total: " << playerTotal << endl;
+                    cout << "Your new card: " << newCard << endl;
 
-                cout << "Your new card: " << newCard << endl;
-                cout << "Your total: " << playerTotal << endl;
+                        if (playerTotal > 21){
+                            if(numAces > 0){
+                                numAces -= 1;
+                                playerTotal -= 10;
+                            }
+                        }
 
-                if (playerTotal > 21) {
-                    if(numAces > 0){
-                        playerTotal -= 10;
-                        numAces -= 1;
-                    }else{
-                        cout << "Bust! You lose." << endl;
-                        playerMoney -= playerBet;
-                        cout << "You now have $" << playerMoney << "." << endl;
-                        break;
-                    }              
+                    cout << "Your total: " << playerTotal << endl;
+
+                    if (playerTotal > 21) {
+                            cout << "Bust! You lose." << endl;
+                            playerMoney -= playerBet;
+                            cout << "You now have $" << playerMoney << "." << endl;
+                            break;
+                        }
+
+                    cout << "Do you want to hit or stand? (h/s): ";
+                    cin >> choice;              
                 }
-                cout << "Do you want to hit or stay? (h/s): ";
-                cin >> choice;
-            }
         }
+
         
 
     // Dealer's turn
         cout << "Dealer's second card: " << card2 << endl;
-        while (dealerTotal < 17) {
+        while (dealerTotal < 17 && playerTotal <= 21) {
             int newCard = rand() % 10 + 1;
             dealerTotal += newCard;
 
@@ -224,7 +239,7 @@ int main()
             }
 
             cout << "Dealer's new card: " << newCard << endl;
-            cout << "Dealer's total: " << dealerTotal << endl;
+            cout << "Dealer's new total: " << dealerTotal << endl;
             if (dealerTotal > 21) {
                 cout << "Dealer busts! You win." << endl;
                 playerMoney += playerBet;
@@ -255,6 +270,9 @@ int main()
             cout << "Hand 2: Push." << endl;
         }
     } else {
+        cout << "Dealer's final hand: " << dealerTotal << endl;
+        cout << "Your final hand: " << playerTotal << endl;
+
          if (playerTotal > dealerTotal && playerTotal <= 21) {
             cout << "You win!" << endl;
             playerMoney += playerBet;
@@ -282,5 +300,6 @@ int main()
     }
     return 0;
 }
+
 
 
